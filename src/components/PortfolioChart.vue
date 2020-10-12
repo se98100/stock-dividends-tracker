@@ -10,7 +10,7 @@ import Chart from 'chart.js'
 export default {
     data() {
         return {
-            chartdata: [10,5,-10]
+            chartdata: [-98, -97, -96, -94, -91, -89, -80, -78, -77, -76, -72, -71, -67, -66, -56, -55, -54, -52, -45, -38, -37, -36, -32, -26, -17, -16, -3, 2, 9, 11, 15, 24, 31, 36, 40, 43, 44, 49, 53, 55, 56, 65, 69, 72, 78, 79, 89, 97, 98, 100]
         }
     },
     mounted() {
@@ -18,9 +18,9 @@ export default {
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [1,2,3],
+                labels: [42, 23, 36, 7, 49, 45, 34, 46, 30, 11, 28, 3, 1, 14, 18, 38, 39, 20, 33, 15, 24, 16, 13, 31, 48, 5, 50, 25, 10, 35, 26, 2, 6, 17, 43, 41, 12, 37, 27, 32, 4, 9, 47, 8, 40, 21, 44, 29, 22, 19],
                 datasets: [{
-                    label: 'This week',
+                    label: 'Performance',
                     cubicInterpolationMode: 'monotone',
                     fill: true,
                     data: this.chartdata,
@@ -29,10 +29,15 @@ export default {
                 }]
             },
             options: {
+                elements: {
+                    point: {
+                        radius: 0
+                    }
+                },
                 layout: {
                     padding: {
-                        right: 4,
-                        left: 5
+                        right: 0,
+                        left: 0
                     }
                 },
                 legend: {
@@ -57,8 +62,7 @@ export default {
                             display: false
                         },
                         ticks: {
-                            display: false,
-                            padding: 100
+                            display: false
                         }
                     }]
                 }
@@ -82,8 +86,9 @@ export default {
     }
 
     #pChartCanvas {
-        padding-top: 10px;
-        width: 710px !important;
+        width: 711px !important;
+        height: 380px !important;
         margin-left: -10px;
+        margin-top: -4px;
     }
 </style>

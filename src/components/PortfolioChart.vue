@@ -29,6 +29,12 @@ export default {
                 }]
             },
             options: {
+                layout: {
+                    padding: {
+                        right: 4,
+                        left: 5
+                    }
+                },
                 legend: {
                     display: false
                 },

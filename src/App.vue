@@ -1,15 +1,21 @@
 <template>
   <site-header title="Dividends tracker" header-height="55px"/>
+  <div id="content">
+    <portfolio-chart/>
+  </div>
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
 </template>
 
 <script>
-import SiteHeader from './components/SiteHeader'
+import SiteHeader from './components/SiteHeader';
+import PortfolioChart from './components/PortfolioChart'
 
 export default {
   name: 'App',
   components: {
-    SiteHeader
+    SiteHeader,
+    PortfolioChart
   }
 }
 </script>
@@ -18,5 +24,10 @@ export default {
   * {
     font-family: Quicksand;
     font-style: normal;
+  }
+
+  #content {
+    height: 100%;
+    margin-top: 55px;
   }
 </style>

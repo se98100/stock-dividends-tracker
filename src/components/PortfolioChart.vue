@@ -7,90 +7,156 @@
 <script>
 import Chart from 'chart.js'
 import 'chartjs-plugin-crosshair'
+import Config from '../../config'
+import Data from '../../data'
 
 export default {
-    data() {
-        return {
-            chartdata: [-98, -97, -96, -94, -91, -89, -80, -78, -77, -76, -72, -71, -67, -66, -56, -55, -54, -52, -45, -38, -37, -36, -32, -26, -17, -16, -3, 2, 9, 11, 15, 24, 31, 36, 40, 43, 44, 49, 53, 55, 56, 65, 69, 72, 78, 79, 89, 97, 98, 100]
+    methods: {
+        renderChart() {
+            var oldest = {
+                index: 0,
+                date: 0
+            };
+            for(let i=0; i<Data.length; i++) {
+                var date = Date.parse(Data[i].date);
+                if(oldest.date == 0 || date < Date.parse(oldest.date)) {
+                    oldest.date = Data[i].date;
+                    oldest.index = i;
+                }
+            }
+
+            var diff = Date.now() - Date.parse(oldest.date);
+            var seriesName = '';
+            if(diff < 86400*100*1000) {
+                seriesName = 'Time Series (Daily)';
+            } else if (diff < 86400*7*100*1000) {
+                seriesName = 'Weekly Time Series';
+            }
+
+            var promises = [];
+            var gains = [];
+            for(let i=0; i<Data.length; i++) {
+                var str = '';
+                if(seriesName == 'Time Series (Daily)')
+                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' 
+                        + Data[i].sym + '&apikey=' + Config.alphaKey;
+                else if (seriesName == 'Weekly Time Series')
+                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=' 
+                        + Data[i].sym + '&apikey=' + Config.alphaKey;
+
+                promises.push(
+                    fetch(str)
+                    .then(function(res){
+                        return res.json();
+                    })
+                    .then(function(obj){
+                        gains[i] = {};
+                        for(const [key, value] of Object.entries(obj[seriesName])) {
+                            if(Date.parse(key) >= Date.parse(Data[i].date))
+                                gains[i][key] = (parseFloat(value['4. close']) - Data[i].price) * Data[i].shares;
+                            else break;
+                        }
+                    })
+                );
+            }
+
+            var datachart = [];
+            var labels = []
+            Promise.all(promises)
+            .then(() => {
+                for(const date in gains[oldest.index]) {
+                    if(labels.length == 0) labels.push(0);
+                    else labels.push(labels[labels.length - 1] + 1);
+                    datachart[labels[labels.length - 1]] = 0;
+                    for(var i=0; i<gains.length; i++) {
+                        if(gains[i][date] != undefined)
+                            datachart[labels[labels.length - 1]] += gains[i][date];
+                    }
+                }
+            })
+            .then(() => {datachart = datachart.reverse()})
+            .then(() => {
+                var ctx = document.getElementById("pChartCanvas").getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Performance',
+                            cubicInterpolationMode: 'monotone',
+                            fill: true,
+                            data: datachart,
+                            borderColor: '#003459',
+                            borderWidth: 4,
+                            backgroundColor: 'rgba(0, 52, 89, .2)',
+                            pointHoverBackgroundColor: '#FFFFFF',
+                            pointHoverBorderWidth: 4,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        tooltips: {
+                            mode: "interpolate",
+                            intersect: false,
+                            displayColors: false,
+                            callbacks: {
+                                title: function () {
+                                    return 'Gains:';
+                                },
+                                label: function (i) {
+                                    var gain = i.yLabel.toFixed(2);
+                                    return (
+                                        parseFloat(gain) >= 0 ? '+' + gain : gain
+                                    );
+                                }
+                            }
+                        },
+                        hover: {
+                            intersect: false
+                        },
+                        plugins: {
+                            crosshair: {
+                                line: {
+                                    color: "#00171F",
+                                    width: 1,
+                                    dashPattern: [15,15]
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    display: false
+                                },
+                                ticks: {
+                                    display: false
+                                },
+                                offset: true
+                            }],
+                            xAxes: [{
+                                gridLines: {
+                                    display: false
+                                },
+                                ticks: {
+                                    display: false
+                                }
+                            }]
+                        }
+                    }
+                });
+            });
         }
     },
     mounted() {
-        var ctx = document.getElementById("pChartCanvas").getContext("2d");
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [42, 23, 36, 7, 49, 45, 34, 46, 30, 11, 28, 3, 1, 14, 18, 38, 39, 20, 33, 15, 24, 16, 13, 31, 48, 5, 50, 25, 10, 35, 26, 2, 6, 17, 43, 41, 12, 37, 27, 32, 4, 9, 47, 8, 40, 21, 44, 29, 22, 19],
-                datasets: [{
-                    label: 'Performance',
-                    cubicInterpolationMode: 'monotone',
-                    fill: true,
-                    data: this.chartdata,
-                    borderColor: '#003459',
-                    borderWidth: 4,
-                    backgroundColor: 'rgba(0, 52, 89, .2)',
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderWidth: 4,
-                    pointHoverRadius: 5
-                }]
-            },
-            options: {
-                tooltips: {
-                    mode: "interpolate",
-                    intersect: false,
-                    displayColors: false,
-                    callbacks: {
-                        title: function () {
-                            return 'Gains:';
-                        },
-                        label: function (i) {
-                            var gain = i.yLabel.toFixed(2);
-                            return (
-                                parseFloat(gain) >= 0 ? '+' + gain : gain
-                            );
-                        }
-                    }
-                },
-                hover: {
-                    intersect: false
-                },
-                plugins: {
-                    crosshair: {
-                        line: {
-                            color: "#00171F",
-                            width: 1,
-                            dashPattern: [15,15]
-                        }
-                    }
-                },
-                elements: {
-                    point: {
-                        radius: 0
-                    }
-                },
-                legend: {
-                    display: false
-                },
-                scales: {
-                    yAxes: [{
-                        gridLines: {
-                            display: false
-                        },
-                        ticks: {
-                            display: false
-                        },
-                        offset: true
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            display: false
-                        },
-                        ticks: {
-                            display: false
-                        }
-                    }]
-                }
-            }
-        });
+        this.renderChart();
     }
 }
 </script>

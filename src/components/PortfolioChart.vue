@@ -76,9 +76,9 @@ export default {
     #portfolioChart {
         position: relative;
         width: 700px;
-        height: 360px;
-        left: 50px;
-        top: 50px;
+        height: 280px;
+        left: 30px;
+        top: 30px;
 
         border: 1px solid rgba(0, 52, 89, 0.03);
         box-shadow: 4px 4px 10px rgba(0, 52, 89, 0.25);
@@ -87,8 +87,7 @@ export default {
 
     #pChartCanvas {
         width: 711px !important;
-        height: 380px !important;
+        height: 290px !important;
         margin-left: -10px;
-        margin-top: -4px;
     }
 </style>

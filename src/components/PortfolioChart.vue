@@ -6,6 +6,7 @@
 
 <script>
 import Chart from 'chart.js'
+import 'chartjs-plugin-crosshair'
 
 export default {
     data() {
@@ -25,19 +26,45 @@ export default {
                     fill: true,
                     data: this.chartdata,
                     borderColor: '#003459',
-                    backgroundColor: 'rgba(0, 52, 89, .4)'
+                    borderWidth: 4,
+                    backgroundColor: 'rgba(0, 52, 89, .2)',
+                    pointHoverBackgroundColor: '#FFFFFF',
+                    pointHoverBorderWidth: 4,
+                    pointHoverRadius: 5
                 }]
             },
             options: {
+                tooltips: {
+                    mode: "interpolate",
+                    intersect: false,
+                    displayColors: false,
+                    callbacks: {
+                        title: function () {
+                            return 'Gains:';
+                        },
+                        label: function (i) {
+                            var gain = i.yLabel.toFixed(2);
+                            return (
+                                parseFloat(gain) >= 0 ? '+' + gain : gain
+                            );
+                        }
+                    }
+                },
+                hover: {
+                    intersect: false
+                },
+                plugins: {
+                    crosshair: {
+                        line: {
+                            color: "#00171F",
+                            width: 1,
+                            dashPattern: [15,15]
+                        }
+                    }
+                },
                 elements: {
                     point: {
                         radius: 0
-                    }
-                },
-                layout: {
-                    padding: {
-                        right: 0,
-                        left: 0
                     }
                 },
                 legend: {
@@ -46,11 +73,7 @@ export default {
                 scales: {
                     yAxes: [{
                         gridLines: {
-                            color: "transparent",
-                            display: true,
-                            drawBorder: false,
-                            zeroLineColor: "#ccc",
-                            zeroLineWidth: 1
+                            display: false
                         },
                         ticks: {
                             display: false
@@ -67,7 +90,7 @@ export default {
                     }]
                 }
             }
-        })
+        });
     }
 }
 </script>
@@ -86,8 +109,8 @@ export default {
     }
 
     #pChartCanvas {
-        width: 711px !important;
+        width: 712px !important;
         height: 290px !important;
-        margin-left: -10px;
+        margin-left: -11px;
     }
 </style>

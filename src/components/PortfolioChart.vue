@@ -41,22 +41,11 @@ export default {
             var promises = [];
             var gains = [];
             for(let i=0; i<Data.length; i++) {
-                var str = '';
-                if(seriesName == 'Time Series (Daily)')
-                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' 
-                        + Data[i].sym + '&apikey=' + Config.alphaKey;
-                else if (seriesName == 'Weekly Time Series')
-                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=' 
-                        + Data[i].sym + '&apikey=' + Config.alphaKey;
-
                 promises.push(
-                    fetch(str)
-                    .then(function(res){
-                        return res.json();
-                    })
+                    this.getCachedData(Data[i].sym, seriesName)
                     .then(function(obj){
                         gains[i] = {};
-                        for(const [key, value] of Object.entries(obj[seriesName])) {
+                        for(const [key, value] of Object.entries(obj)) {
                             if(Date.parse(key) >= Date.parse(Data[i].date))
                                 gains[i][key] = (parseFloat(value['4. close']) - Data[i].price) * Data[i].shares;
                             else break;
@@ -170,6 +159,87 @@ export default {
                     }
                 });
             });
+        },
+        getLatestData(seriesName, obj) {
+            //It's better to "waste" an API call than calculate latest data due to market close days
+            if(obj[seriesName] == undefined) {
+                obj[seriesName] = {
+                    "latest": {
+                        "fetched": "0",
+                    }
+                }
+            }
+
+            var fetched = new Date(parseInt(obj[seriesName]["latest"]["fetched"]));
+            var dayFetched = new Date(fetched);
+            dayFetched.setHours(0,0,0);
+            var current = new Date();
+            current.setHours(0,0,0);
+            if(dayFetched.toString() == current.toString() && (fetched.getHours() >= 22 || new Date().getHours() < 22)) {
+                return new Promise((res) =>{
+                    res({
+                        value: obj[seriesName]["latest"]["value"],
+                        updated: false
+                    });
+                });
+            }
+
+            var str = '';
+            if(seriesName == 'Time Series (Daily)')
+                str = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=' + Config.alphaKey;
+            else if (seriesName == 'Weekly Time Series')
+                str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=IBM&apikey=' + Config.alphaKey;
+
+            return fetch(str)
+            .then(res => { return res.json() })
+            .then(o => {
+                return {
+                    value: Object.keys(o[seriesName])[0],
+                    updated: true
+                }
+            });
+        },
+        getCachedData(sym, seriesName) {
+            var o = JSON.parse(localStorage.getItem('cache'));
+            if(o == undefined)
+                o = {};
+            if(o[sym] == undefined)
+                o[sym] = {};
+
+            return this.getLatestData(seriesName, o[sym])
+            .then(latest => {
+                if(latest.updated){
+                    o[sym][seriesName]["latest"]["fetched"] = Date.now();
+                    o[sym][seriesName]["latest"]["value"] = latest.value;
+                }
+
+                if(o[sym][seriesName]["data"] == undefined) {
+                    o[sym][seriesName]["data"] = {}
+                }
+
+                if(latest.value == Object.keys(o[sym][seriesName]["data"])[0]) {
+                    localStorage.setItem("cache", JSON.stringify(o));
+                    return o[sym][seriesName]["data"];
+                }
+
+                var str = '';
+                if(seriesName == 'Time Series (Daily)')
+                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' 
+                        + sym + '&apikey=' + Config.alphaKey;
+                else if (seriesName == 'Weekly Time Series')
+                    str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=' 
+                        + sym + '&apikey=' + Config.alphaKey;
+                return fetch(str)
+                .then(function(res){
+                    console.log(sym + " - API call")
+                    return res.json();
+                })
+                .then(function(res){
+                    o[sym][seriesName]["data"] = res[seriesName];
+                    localStorage.setItem("cache", JSON.stringify(o));
+                    return res[seriesName];
+                })
+            })
         }
     },
     mounted() {

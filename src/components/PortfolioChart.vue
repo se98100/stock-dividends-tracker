@@ -13,6 +13,11 @@ import Data from '../../data'
 export default {
     methods: {
         renderChart() {
+            var investment = 0;
+            for(var i=0; i<Data.length; i++) {
+                investment += Data[i].price * Data[i].shares;
+            }
+
             var oldest = {
                 index: 0,
                 date: 0
@@ -61,20 +66,23 @@ export default {
             }
 
             var datachart = [];
-            var labels = []
+            var labels = [];
+            var index = -1;
             Promise.all(promises)
             .then(() => {
                 for(const date in gains[oldest.index]) {
-                    if(labels.length == 0) labels.push(0);
-                    else labels.push(labels[labels.length - 1] + 1);
-                    datachart[labels[labels.length - 1]] = 0;
+                    datachart[++index] = 0;
+                    labels[index] = date;
                     for(var i=0; i<gains.length; i++) {
                         if(gains[i][date] != undefined)
-                            datachart[labels[labels.length - 1]] += gains[i][date];
+                            datachart[index] += gains[i][date];
                     }
                 }
             })
-            .then(() => {datachart = datachart.reverse()})
+            .then(() => {
+                datachart = datachart.reverse();
+                labels = labels.reverse();
+            })
             .then(() => {
                 var ctx = document.getElementById("pChartCanvas").getContext("2d");
                 new Chart(ctx, {
@@ -99,15 +107,19 @@ export default {
                             mode: "interpolate",
                             intersect: false,
                             displayColors: false,
+                            backgroundColor: "rgba(0,23,31,0.8)",
                             callbacks: {
                                 title: function () {
                                     return 'Gains:';
                                 },
                                 label: function (i) {
                                     var gain = i.yLabel.toFixed(2);
-                                    return (
-                                        parseFloat(gain) >= 0 ? '+' + gain : gain
-                                    );
+                                    return [
+                                        (gain >= 0 ? '+' + gain : gain) + ' USD',
+                                        ((gain * 100) / investment).toFixed(2) + " %",
+                                        '----------------',
+                                        i.xLabel
+                                    ];
                                 }
                             }
                         },

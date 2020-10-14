@@ -107,6 +107,11 @@ export default {
                             mode: "interpolate",
                             intersect: false,
                             displayColors: false,
+                            caretPadding: 5,
+                            titleFontFamily: "Quicksand",
+                            titleFontSize: 15,
+                            bodyFontSize: 13,
+                            bodyFontFamily: "Quicksand",
                             backgroundColor: "rgba(0,23,31,0.8)",
                             callbacks: {
                                 title: function () {

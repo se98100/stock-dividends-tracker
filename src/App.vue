@@ -1,10 +1,12 @@
 <template>
-  <site-header title="Dividends tracker" header-height="55px"/>
-  <div id="content">
-    <portfolio-chart/>
-  </div>
+  <div>
+    <site-header title="Dividends tracker" header-height="55px"/>
+    <div id="content">
+      <portfolio-chart/>
+    </div>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
+  </div>
 </template>
 
 <script>

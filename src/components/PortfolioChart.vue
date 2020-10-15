@@ -175,7 +175,10 @@ export default {
             dayFetched.setHours(0,0,0);
             var current = new Date();
             current.setHours(0,0,0);
-            if(dayFetched.toString() == current.toString() && (fetched.getHours() >= 22 || new Date().getHours() < 22)) {
+            var yesterday = new Date(current);
+            yesterday.setDate(current.getDate() - 1);
+            if((dayFetched.toString() == current.toString() && (fetched.getHours() >= 22 || new Date().getHours() < 22))
+                || (dayFetched.toString() == yesterday.toString() && new Date().getHours() < 22)) {
                 return new Promise((res) =>{
                     res({
                         value: obj[seriesName]["latest"]["value"],

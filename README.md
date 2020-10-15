@@ -37,7 +37,7 @@ export default [
     },
     {
         sym: "CVS",
-        price: 62.66,
+        price: 56.66,
         shares: 8,
         date: "2020-09-03"
     }

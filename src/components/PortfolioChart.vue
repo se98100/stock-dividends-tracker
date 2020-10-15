@@ -321,7 +321,7 @@ export default {
     }
 
     #pChartCanvas {
-        width: 712px !important;
+        width: 710px !important;
         height: 290px !important;
         margin-left: -11px;
     }

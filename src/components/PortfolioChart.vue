@@ -1,6 +1,10 @@
 <template>
-    <div id="portfolioChart">
-        <canvas id="pChartCanvas"/>
+    <div id="portfolioChart" :class="{ showProgressBar : completed / toComplete != 1}">
+        <b-progress v-if="completed / toComplete != 1" :value="completed"
+            size="is-large" type="is-info" show-value :max="toComplete">
+            Loading {{completed}} / {{toComplete}} stock
+        </b-progress>
+        <canvas v-else id="pChartCanvas"/>
     </div>
 </template>
 
@@ -11,8 +15,19 @@ import Config from '../../config'
 import Data from '../../data'
 
 export default {
+    data() {
+        return {
+            isLoading: true,
+            isFullPage: false,
+            completed: 0,
+            toComplete: 0
+        }
+    },
     methods: {
         renderChart() {
+            //Set progress bar
+            this.toComplete = Data.length;
+
             var investment = 0;
             for(var i=0; i<Data.length; i++) {
                 investment += Data[i].price * Data[i].shares;
@@ -40,10 +55,14 @@ export default {
 
             var promises = [];
             var gains = [];
+            var t = this;
             for(let i=0; i<Data.length; i++) {
                 promises.push(
                     this.getCachedData(Data[i].sym, seriesName)
                     .then(function(obj){
+                        //Update progress bar
+                        t.completed++;
+
                         gains[i] = {};
                         for(const [key, value] of Object.entries(obj)) {
                             if(Date.parse(key) >= Date.parse(Data[i].date))
@@ -73,6 +92,7 @@ export default {
                 labels = labels.reverse();
             })
             .then(() => {
+                this.isLoading = false;
                 var ctx = document.getElementById("pChartCanvas").getContext("2d");
                 new Chart(ctx, {
                     type: 'line',
@@ -291,6 +311,13 @@ export default {
         border: 1px solid rgba(0, 52, 89, 0.03);
         box-shadow: 4px 4px 10px rgba(0, 52, 89, 0.25);
         border-radius: 13px;
+    }
+
+    .showProgressBar {
+        /* To center progress bar */
+        display: table-cell;
+        vertical-align: middle;
+        padding: 13%;
     }
 
     #pChartCanvas {

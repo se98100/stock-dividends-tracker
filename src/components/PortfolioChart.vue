@@ -189,15 +189,25 @@ export default {
                 str = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=' + Config.alphaKey;
             else if (seriesName == 'Weekly Time Series')
                 str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=IBM&apikey=' + Config.alphaKey;
-
-            return fetch(str)
-            .then(res => { return res.json() })
-            .then(o => {
-                return {
-                    value: Object.keys(o[seriesName])[0],
-                    updated: true
-                }
-            });
+            
+            function sleep(ms) {
+                return new Promise((res) => {
+                    setTimeout(res, ms);
+                })
+            }
+            function f() {
+                return fetch(str)
+                .then(function(res) { return res.json() })
+                .then(function(o) {
+                    if(o[seriesName] == undefined)
+                        return sleep(2000).then(() => { return f() });
+                    return {
+                        value: Object.keys(o[seriesName])[0],
+                        updated: true
+                    }
+                });
+            }
+            return f();
         },
         getCachedData(sym, seriesName) {
             var o = JSON.parse(localStorage.getItem('cache'));
@@ -217,8 +227,17 @@ export default {
                     o[sym][seriesName]["data"] = {}
                 }
 
+                function loadInCache() {
+                    var curr = JSON.parse(localStorage.getItem('cache'));
+                    if(curr != undefined){
+                        curr[sym] = o[sym];
+                        localStorage.setItem("cache", JSON.stringify(curr));
+                    } else 
+                        localStorage.setItem("cache", JSON.stringify(o));
+                }
+                
                 if(latest.value == Object.keys(o[sym][seriesName]["data"])[0]) {
-                    localStorage.setItem("cache", JSON.stringify(o));
+                    loadInCache();
                     return o[sym][seriesName]["data"];
                 }
 
@@ -229,16 +248,26 @@ export default {
                 else if (seriesName == 'Weekly Time Series')
                     str = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=' 
                         + sym + '&apikey=' + Config.alphaKey;
-                return fetch(str)
-                .then(function(res){
-                    console.log(sym + " - API call")
-                    return res.json();
-                })
-                .then(function(res){
-                    o[sym][seriesName]["data"] = res[seriesName];
-                    localStorage.setItem("cache", JSON.stringify(o));
-                    return res[seriesName];
-                })
+
+                function sleep(ms) {
+                    return new Promise((res) => {
+                        setTimeout(res, ms);
+                    })
+                }
+                function f() {
+                    return fetch(str)
+                    .then(function(res){
+                        return res.json();
+                    })
+                    .then(function(res){
+                        if(res[seriesName] == undefined)
+                            return sleep(2000).then(() => { return f(); });
+                        o[sym][seriesName]["data"] = res[seriesName];
+                        loadInCache();
+                        return res[seriesName];
+                    })
+                }
+                return f();
             })
         }
     },

@@ -2,7 +2,7 @@
     <div id="portfolioChart" :class="{ showProgressBar : completed / toComplete != 1}">
         <b-progress v-if="completed / toComplete != 1" :value="completed"
             size="is-large" type="is-info" show-value :max="toComplete">
-            Loading {{completed}} / {{toComplete}} stock
+            Loading stock {{completed}} / {{toComplete}}
         </b-progress>
         <canvas v-else id="pChartCanvas"/>
     </div>

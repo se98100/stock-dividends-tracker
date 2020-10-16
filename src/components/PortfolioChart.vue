@@ -1,5 +1,5 @@
 <template>
-    <div id="portfolioChart" :class="{ showProgressBar : completed / toComplete != 1}">
+    <div :class="{ showProgressBar : completed / toComplete != 1}">
         <b-progress v-if="completed / toComplete != 1" :value="completed"
             size="is-large" type="is-info" show-value :max="toComplete">
             Loading stock {{completed}} / {{toComplete}}
@@ -160,12 +160,13 @@ export default {
                         scales: {
                             yAxes: [{
                                 gridLines: {
-                                    display: false
+                                    display: false,
+                                    drawTicks: false
                                 },
                                 ticks: {
                                     display: false
                                 },
-                                offset: true
+                                offset: true,
                             }],
                             xAxes: [{
                                 gridLines: {
@@ -301,28 +302,8 @@ export default {
 </script>
 
 <style scoped>
-    #portfolioChart {
-        position: relative;
-        width: 700px;
-        height: 280px;
-        left: 30px;
-        top: 30px;
-
-        border: 1px solid rgba(0, 52, 89, 0.03);
-        box-shadow: 4px 4px 10px rgba(0, 52, 89, 0.25);
-        border-radius: 13px;
-    }
-
     .showProgressBar {
         /* To center progress bar */
-        display: table-cell;
-        vertical-align: middle;
         padding: 13%;
-    }
-
-    #pChartCanvas {
-        width: 710px !important;
-        height: 290px !important;
-        margin-left: -11px;
     }
 </style>

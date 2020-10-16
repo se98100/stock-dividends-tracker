@@ -1,35 +1,27 @@
 <template>
   <div>
-    <site-header title="Dividends tracker" header-height="55px"/>
-    <div id="content">
-      <portfolio-chart/>
-    </div>
+    <site-header title="Dividends tracker"/>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand"/>
   </div>
 </template>
 
 <script>
-import SiteHeader from './components/SiteHeader';
-import PortfolioChart from './components/PortfolioChart'
+//import PortfolioChart from './components/PortfolioChart'
+import SiteHeader from './components/SiteHeader'
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    SiteHeader,
-    PortfolioChart
-  }
-}
+    //PortfolioChart,
+    SiteHeader
+  },
+};
 </script>
 
 <style>
-  * {
-    font-family: Quicksand;
-    font-style: normal;
-  }
-
-  #content {
-    height: 100%;
-    margin-top: 55px;
-  }
+* {
+  font-family: Quicksand;
+  font-style: normal;
+}
 </style>

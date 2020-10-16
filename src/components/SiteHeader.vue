@@ -1,36 +1,25 @@
 <template>
-    <div id="header" :style="{height : headerHeight}">
-        <span id="title" :style="{lineHeight : headerHeight}">{{title}}</span>
+    <div class="navbar my-nav">
+      <div class="navbar-brand">
+        <div class="navbar-item">
+          <div class="title is-3 brand">{{title}}</div>
+        </div>
+      </div>
     </div>
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            height : "75px"
-        }
-    },
-    props: ['title','headerHeight']
+    props: ['title']
 }
 </script>
 
 <style scoped>
-    #header {
-        position: absolute;
-        width: 100%;
-        left: 0px;
-        top: 0px;
+.my-nav {
+  background-color: #00A7E1 !important;
+}
 
-        text-align: center;
-
-        background: #00A7E1;
-    }
-
-    #title {
-        font-weight: bold;
-        font-size: 36px;
-
-        color: #FFFFFF;
-    }
+.brand {
+  color: white !important;
+}
 </style>

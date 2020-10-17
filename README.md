@@ -44,6 +44,12 @@ export default [
 ]
 ```
 
+### Compiles the sass/style.scss into css/style.css
+If you make changes to the style.scss file then you need to compile it with node-sass for changes to be applied.
+```
+npm run css-build
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

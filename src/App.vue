@@ -2,10 +2,10 @@
   <div>
     <site-header title="Dividends tracker"/>
     <div class="container">
-    <div class="tile is-ancestor my-ancestor">
+    <div class="tile is-ancestor mt-3">
       <div class="tile is-vertical">
         <div class="tile is-parent is-5">
-          <div class="tile is-child box chart-box">
+          <div class="tile is-child box p-0">
             <portfolio-chart/>
           </div>
         </div>
@@ -34,13 +34,5 @@ export default {
 * {
   font-family: Quicksand;
   font-style: normal;
-}
-
-.my-ancestor {
-  margin-top: 0.75em !important;
-}
-
-.chart-box {
-  padding: 0 !important;
 }
 </style>

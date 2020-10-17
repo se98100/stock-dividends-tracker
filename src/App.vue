@@ -4,13 +4,13 @@
     <div class="container pt-4">
     <div class="tile is-ancestor">
       <div class="tile is-vertical">
-        <div class="tile is-parent">
-          <div class="tile is-child is-5 box p-0">
-            <portfolio-chart/>
+        <div class="tile">
+          <div class="tile is-parent is-5">
+            <div class="tile is-child box p-0">
+              <portfolio-chart/>
+            </div>
           </div>
-          <div class="tile is-child pl-5">
-            <yield-chart/>
-          </div>
+          <yield-chart/>
         </div>
       </div>
     </div>

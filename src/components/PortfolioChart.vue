@@ -166,7 +166,7 @@ export default {
                                 ticks: {
                                     display: false
                                 },
-                                offset: true,
+                                offset: false,
                             }],
                             xAxes: [{
                                 gridLines: {
@@ -306,5 +306,9 @@ export default {
     .showProgressBar {
         /* To center progress bar */
         padding: 13%;
+    }
+
+    #pChartCanvas {
+        border-radius: 6px;
     }
 </style>

@@ -170,7 +170,8 @@ export default {
                             }],
                             xAxes: [{
                                 gridLines: {
-                                    display: false
+                                    display: false,
+                                    tickMarkLength: 0
                                 },
                                 ticks: {
                                     display: false

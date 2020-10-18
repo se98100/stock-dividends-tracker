@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="tile is-6 is-child is-flex is-flex-direction-column is-justify-content-center"
-            style="border-left: 1px solid #003459;">
+            :class="{ 'left-border' : innerWidth > 768, 'top-border' : innerWidth < 769 }">
             <div class="content">
                 <span style="font-size: 1.5rem">Portfolio value:</span><br>
                 <span class="has-text-weight-bold" style="font-size: 2rem">$23,575.45</span>
@@ -30,7 +30,14 @@
 
 <script>
 export default {
-    
+    data() {
+        return {
+            innerWidth: 0
+        }
+    },
+    mounted() {
+        this.innerWidth = window.innerWidth;
+    }
 }
 </script>
 
@@ -43,5 +50,13 @@ export default {
         width: 100%;
         text-align: center;
         margin: 0 !important;
+    }
+
+    .left-border {
+        border-left: 1px solid #003459;
+    }
+
+    .top-border {
+        padding-top: .75rem;
     }
 </style>

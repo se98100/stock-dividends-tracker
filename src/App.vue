@@ -10,7 +10,7 @@
               <portfolio-chart/>
             </div>
           </div>
-          <yield-chart/>
+          <kpis/>
         </div>
       </div>
     </div>
@@ -23,14 +23,14 @@
 <script>
 import PortfolioChart from './components/PortfolioChart'
 import SiteHeader from './components/SiteHeader'
-import YieldChart from './components/YieldChart'
+import Kpis from './components/Kpis'
 
 export default {
   name: "App",
   components: {
     PortfolioChart,
     SiteHeader,
-    YieldChart
+    Kpis
   },
 };
 </script>

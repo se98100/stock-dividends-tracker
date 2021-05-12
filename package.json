@@ -11,7 +11,7 @@
   "dependencies": {
     "buefy": "^0.9.3",
     "bulma": "^0.9.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-crosshair": "^1.1.6",
     "core-js": "^3.6.5",
     "node-sass": "^4.14.1",
